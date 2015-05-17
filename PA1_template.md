@@ -14,8 +14,8 @@ keep_md: true
 * Breaks down steps and intervals into columns
 * Creates new data set
 
-```{r}
 
+```r
 setwd("C:/Users/ghobbs/Desktop")
 active <- read.csv("activity.csv")
 days <- strptime(as.character(active[,2]), "%Y-%m-%d")
@@ -33,17 +33,35 @@ names(data1) <- c("days","weekday","steps","interval")
 * Plots data and presents histogram
 * Calculates the Mean and Median Steps taken per day
 
-```{r}
+
+```r
 require('ggplot2')
 stepday <- aggregate(data1$steps~days, data=data1, FUN=sum)
 gsteps <- ggplot(stepday, aes(x=stepday[,2]))
 gsteps+geom_histogram(colour='blue',fill='orange',binwidth=500)+xlim(c(0,25000))+ylim(c(0,25))+ xlab("Number of Steps per Day")+ylab("Number of Days")+ggtitle("Steps [No NAs]")
+```
+
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+
+```r
 mean1 <- mean(stepday[,2])
 median1 <- median(stepday[,2])
 ```
-```{r}
+
+```r
 print(mean1)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 print(median1)
+```
+
+```
+## [1] 10765
 ```
 The mean and median of the data set are seen above in the print function.  Mean1 is the mean and Median1 is the median.
 
@@ -54,14 +72,24 @@ The mean and median of the data set are seen above in the print function.  Mean1
 * Creates a time series plot; aggregate steps by interval by mean
 * Presents data to dechipher maximum number of steps
 
-```{r}
+
+```r
 stepint <- aggregate(data1$steps~interval, data=data1, FUN=mean)
 names(stepint) <- c("interval", "steps")
 gstep <- ggplot(stepint, aes(x=stepint$interval, y=stepint$steps), group=1)
 gstep+geom_line()+xlab("Interval")+ylab("Mean of Steps")+ggtitle("Mean Steps by Interval")
+```
+
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
+```r
 maxstep <- max(stepint$steps)
 maxstepint <- stepint$interval[which.max(stepint$steps)]
 print(maxstepint)
+```
+
+```
+## [1] 835
 ```
 The 5-minute interval that contains the maximum number of steps is in calculation seen above
 
@@ -73,7 +101,8 @@ The 5-minute interval that contains the maximum number of steps is in calculatio
 * Creates a new dataset that is equal to the original dataset but with the missing data filled in.
 * Makes a histogram of the total number of steps taken each day and calculates and report the mean and median total number of steps taken per day. 
 
-```{r}
+
+```r
 issue <- is.na(steps)
 sumissue <- sum(issue)
 data2 <- data1
@@ -84,6 +113,11 @@ for (i in 1:17568){
 }
 gNewStep <- ggplot(data2, aes(x=data2[,3]))
 gNewStep+geom_histogram(fill='orange',binwidth=1)+xlim(c(0,900))+ylim(c(0,30))+ xlab("Number of Steps per Day")+ylab("Number of Days")+ggtitle("Number of Steps per Day [Replaced NA]")
+```
+
+![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png) 
+
+```r
 meanNew <- mean(data2[,3])
 medianew <- median(data2[,3])
 ```
@@ -96,11 +130,14 @@ The values in the new data set differ from the estimates from the first part of 
 * Takes mean of both designation noted above
 * Plots data in a panel plot replicating what is in the rdpeng readme file example
 
-```{r}
+
+```r
 require('lattice')
 data2$wkday <- ifelse(weekdays(data2$days)=="Saturday"|weekdays(data2$days)=="Sunday", data2$wkday <- "Weekend", data2$wkday <- "Weekdays")
 stepDay <- aggregate(steps~interval+wkday, data=data2, FUN=mean)
 xyplot(steps~interval|wkday, data=stepDay, type="l", layout=c(1,2), xlab="Interval [Int]", ylab="Average Steps", main="Average Steps per Int")
 ```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
 
 There are differences in the activity patterns between the week day and weekend.  From the plots you can so that while there is a higher average steps taken in one given interval, the average number of steps taken, over all intervals, is higher on the weekends than on the weekdays.
